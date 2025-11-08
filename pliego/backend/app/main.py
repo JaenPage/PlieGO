@@ -21,6 +21,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/api/v1/health")
+def health():
+    return {"status": "ok"}
+
+
 app.include_router(upload_router, prefix="/api/v1")
 app.include_router(analysis_router, prefix="/api/v1")
 
