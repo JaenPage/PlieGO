@@ -9,14 +9,21 @@ from app.models.db import init_db
 
 app = FastAPI(title="PlieGO API", version="0.1")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+DEV = True  # dejar True en desarrollo
+
+origins = ["*"] if DEV else ["http://localhost:5173"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 app.include_router(upload_router, prefix="/api/v1")
 app.include_router(analysis_router, prefix="/api/v1")
+
 
 @app.on_event("startup")
 def startup():

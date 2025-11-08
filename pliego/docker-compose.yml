@@ -3,11 +3,15 @@ services:
   api:
     build: ./backend
     ports: [ "8000:8000" ]
-    volumes: [ "./backend/app:/app/app", "./backend/uploads:/app/uploads" ]
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/uploads:/app/uploads
   web:
     build: ./frontend
     ports: [ "5173:5173" ]
     environment:
+      # Puedes borrarla y calcular dinámicamente en el frontend (ver sección 3)
       - VITE_API_URL=http://localhost:8000/api/v1
-    volumes: [ "./frontend:/app" ]
-    command: ["npm","run","dev","--","--host"]
+    depends_on:
+      - api
+    command: ["npm","run","dev","--","--host","0.0.0.0"]

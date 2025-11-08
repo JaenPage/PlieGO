@@ -15,7 +15,12 @@ export default function FileUpload({ onUploaded }: { onUploaded: (id: number) =>
       const { data } = await api.post("/upload", form, { headers: { "Content-Type": "multipart/form-data" } });
       await onUploaded(data.id);
     } catch (err: any) {
-      const detail = err?.response?.data?.detail || err?.message || "Error desconocido";
+      let detail = "Network Error";
+      if (err?.response?.data?.detail) detail = err.response.data.detail;
+      else if (err?.message) detail = err.message;
+      else if (err?.toJSON) detail = JSON.stringify(err.toJSON());
+
+      console.error("Upload failed:", err);
       setError(detail);
     } finally {
       setLoading(false);
