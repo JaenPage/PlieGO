@@ -1,8 +1,13 @@
+import logging
+
 import pdfplumber
 from docx import Document
 from PIL import Image
 import pytesseract
 from pypdf import PdfReader
+
+
+logger = logging.getLogger(__name__)
 
 
 def clean_text(t: str) -> str:
@@ -40,8 +45,12 @@ def extract_docx_text(path: str) -> str:
 
 
 def extract_text(path: str) -> str:
-    if path.lower().endswith(".pdf"):
-        return extract_pdf_text(path)
-    if path.lower().endswith(".docx"):
-        return extract_docx_text(path)
+    try:
+        if path.lower().endswith(".pdf"):
+            return extract_pdf_text(path)
+        if path.lower().endswith(".docx"):
+            return extract_docx_text(path)
+    except Exception as exc:
+        logger.exception("Fallo extrayendo texto del archivo %s", path)
+        raise RuntimeError("Error durante la extracción/OCR") from exc
     raise ValueError("Formato no soportado")

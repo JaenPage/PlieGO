@@ -8,3 +8,5 @@ class Criterion(SQLModel, table=True):
     descripcion: str
     ponderacion: Optional[float] = None
     juicio_valor: bool = False
+    source_start: Optional[int] = None
+    source_end: Optional[int] = None

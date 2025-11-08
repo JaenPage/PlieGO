@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { api } from "../api/client";
 
-export default function FileUpload({ onUploaded }: { onUploaded: (id: number) => void }) {
+export default function FileUpload({ onUploaded }: { onUploaded: (id: number) => Promise<void> | void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
@@ -13,9 +13,10 @@ export default function FileUpload({ onUploaded }: { onUploaded: (id: number) =>
     form.append("file", e.target.files[0]);
     try {
       const { data } = await api.post("/upload", form, { headers: { "Content-Type": "multipart/form-data" } });
-      onUploaded(data.id);
+      await onUploaded(data.id);
     } catch (err: any) {
-      setError("Error subiendo archivo");
+      const detail = err?.response?.data?.detail;
+      setError(detail ? String(detail) : "Error subiendo archivo");
     } finally {
       setLoading(false);
     }

@@ -8,4 +8,5 @@ class Requirement(SQLModel, table=True):
     descripcion: str
     obligatorio: bool = True
     estado: Literal["pending","ok"] = "pending"
-    source_span: Optional[str] = None  # offsets del texto
+    source_start: Optional[int] = None  # offset inicio en Analysis.text
+    source_end: Optional[int] = None    # offset fin en Analysis.text
