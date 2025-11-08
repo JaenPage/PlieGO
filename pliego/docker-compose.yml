@@ -2,16 +2,23 @@ version: "3.9"
 services:
   api:
     build: ./backend
-    ports: [ "8000:8000" ]
+    ports: ["8000:8000"]
     volumes:
       - ./backend/app:/app/app
       - ./backend/uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   web:
     build: ./frontend
-    ports: [ "5173:5173" ]
-    environment:
-      # Puedes borrarla y calcular dinámicamente en el frontend (ver sección 3)
-      - VITE_API_URL=http://localhost:8000/api/v1
+    ports: ["5173:5173"]
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+    environment:
+      # Quitamos VITE_API_URL para usar proxy (ver paso 3)
+      - VITE_API_URL=
     command: ["npm","run","dev","--","--host","0.0.0.0"]
