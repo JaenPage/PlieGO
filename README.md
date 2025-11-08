@@ -37,3 +37,16 @@ pliego/
 ```
 
 Consulta los archivos dentro de cada directorio para ver la implementación completa del MVP.
+
+## 🧪 Uso
+
+1. Levanta el stack:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+2. Abre `http://localhost:5173` y sube un PDF o DOCX.
+3. El flujo de la app: `/upload` → `/analysis/{id}/persist` → vista de resumen y checklist.
+4. Marca cada requisito como **Pendiente** u **OK** desde la UI.
+5. Usa el botón **Exportar JSON** para descargar el análisis (la exportación a PDF llegará en el siguiente sprint).
