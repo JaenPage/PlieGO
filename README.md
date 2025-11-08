@@ -1,14 +1,39 @@
 # PlieGO
 
-PlieGO es un proyecto en desarrollo.  
-Este repositorio será utilizado para crear, probar y documentar el código del proyecto.
+Este repositorio contiene el MVP del proyecto PlieGO, compuesto por un backend en FastAPI y un frontend en React (Vite + TypeScript + CSS Modules). El objetivo es permitir la subida de pliegos en PDF/DOCX, extraer el contenido relevante y presentar un resumen con checklist por sobres.
 
-## 🚀 Objetivo
-Desarrollar una aplicación modular que permita gestionar y automatizar tareas de manera eficiente.
+## 🚀 Puesta en marcha con Docker
 
-## 🛠️ Tecnologías previstas
-- Python 3.x  
-- Git / GitHub  
-- (Agrega aquí cualquier otra tecnología que planees usar)
+```bash
+cd pliego
+docker-compose up --build
+```
 
-## 📂 Estructura inicial
+- API disponible en `http://localhost:8000`.
+- Frontend disponible en `http://localhost:5173`.
+
+## 🧩 Estructura
+
+```
+pliego/
+  backend/
+    app/
+      api/v1/
+      core/
+      models/
+      schemas/
+      services/
+    requirements.txt
+    Dockerfile
+  frontend/
+    src/
+      api/
+      components/
+      pages/
+      styles/
+    package.json
+    Dockerfile
+  docker-compose.yml
+```
+
+Consulta los archivos dentro de cada directorio para ver la implementación completa del MVP.

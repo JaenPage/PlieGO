@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+.env
+.env.*
+*.db
+/uploads/
+pliego/backend/uploads/
+node_modules/
+dist/
+.vscode/
+.DS_Store
+.idea/
