@@ -15,8 +15,8 @@ export default function FileUpload({ onUploaded }: { onUploaded: (id: number) =>
       const { data } = await api.post("/upload", form, { headers: { "Content-Type": "multipart/form-data" } });
       await onUploaded(data.id);
     } catch (err: any) {
-      const detail = err?.response?.data?.detail;
-      setError(detail ? String(detail) : "Error subiendo archivo");
+      const detail = err?.response?.data?.detail || err?.message || "Error desconocido";
+      setError(detail);
     } finally {
       setLoading(false);
     }

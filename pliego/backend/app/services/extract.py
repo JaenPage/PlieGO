@@ -1,10 +1,12 @@
 import logging
+import os
+import subprocess
+import tempfile
 
 import pdfplumber
 from docx import Document
 from PIL import Image
 import pytesseract
-from pypdf import PdfReader
 
 
 logger = logging.getLogger(__name__)
@@ -19,24 +21,42 @@ def clean_text(t: str) -> str:
     return t.strip()
 
 
+def ocr_pdf_with_poppler(path: str, dpi: int = 200) -> str:
+    # Renderiza cada página a PNG en un tmp y pasa OCR con Tesseract
+    tmpdir = tempfile.mkdtemp(prefix="pliego_ocr_")
+    try:
+        prefix = os.path.join(tmpdir, "page")
+        subprocess.run(["pdftoppm", "-png", "-r", str(dpi), path, prefix], check=True)
+        texts = []
+        for fname in sorted(os.listdir(tmpdir)):
+            if not fname.endswith(".png"):
+                continue
+            fp = os.path.join(tmpdir, fname)
+            texts.append(pytesseract.image_to_string(Image.open(fp), lang="spa+eng"))
+        return clean_text("\n".join(texts))
+    except subprocess.CalledProcessError:
+        return ""
+    finally:
+        try:
+            for f_name in os.listdir(tmpdir):
+                os.remove(os.path.join(tmpdir, f_name))
+            os.rmdir(tmpdir)
+        except Exception:  # pragma: no cover - best effort cleanup
+            pass
+
+
 def extract_pdf_text(path: str) -> str:
-    # intenta texto directo
     text = ""
     with pdfplumber.open(path) as pdf:
-        for p in pdf.pages:
-            text += p.extract_text(x_tolerance=2, y_tolerance=2) or ""
+        for page in pdf.pages:
+            text += page.extract_text(x_tolerance=2, y_tolerance=2) or ""
             text += "\n"
-    if text and len(text.strip()) > 200:
-        return clean_text(text)
+    text = clean_text(text)
+    if len(text) > 200:
+        return text
 
-    # fallback OCR página a página (rápido pero robusto)
-    reader = PdfReader(path)
-    ocr_text = []
-    for i in range(len(reader.pages)):
-        with pdfplumber.open(path) as pdf:
-            img = pdf.pages[i].to_image(resolution=200).original
-        ocr_text.append(pytesseract.image_to_string(Image.fromarray(img)))
-    return clean_text("\n".join(ocr_text))
+    ocr_text = ocr_pdf_with_poppler(path, dpi=200)
+    return clean_text(ocr_text)
 
 
 def extract_docx_text(path: str) -> str:
